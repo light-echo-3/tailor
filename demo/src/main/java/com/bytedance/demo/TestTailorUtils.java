@@ -42,6 +42,19 @@ public class TestTailorUtils {
         }
     }
 
+
+    public static void debugDumpHprofData() {
+        try {
+            String source = DIRECTORY + "/debugDumpHprofData.hprof";
+            long t = System.currentTimeMillis();
+            Debug.dumpHprofData(source);
+            System.err.println(">>>>>>>> tailor_for_file: Debug.dumpHprofData:duration=" + (System.currentTimeMillis() - t));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void tailor_for_hook(String fileName) {
         String target = DIRECTORY + "/" + fileName;
         try {
