@@ -31,10 +31,10 @@ public class MainActivity extends AppCompatActivity{
             TestTailorUtils.tailor_for_hook("2.hprof");
         });
         findViewById(R.id.testOOM).setOnClickListener(v -> {
-            List<String> list = new ArrayList<>();
+            List<TestOomModel> list = new ArrayList<>();
             int i = 0;
             while (true) {
-                list.add("test---" + i++);
+                list.add(new TestOomModel("test---" + i++));
             }
         });
     }
