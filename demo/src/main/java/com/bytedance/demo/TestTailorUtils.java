@@ -60,7 +60,7 @@ public class TestTailorUtils {
         try {
             long t = System.currentTimeMillis();
             System.err.println(">>>>>>>> tailor_for_hook: Tailor.dumpHprofData-begin:fileName=" + fileName);
-            Tailor.dumpHprofData(target, false);
+            Tailor.dumpHprofData(target, true);//这里要开启压缩，https://github.com/bytedance/tailor/issues/14
             System.err.println(">>>>>>>> tailor_for_hook: Tailor.dumpHprofData-end:fileName=" + fileName + ",duration=" + (System.currentTimeMillis() - t));
         } catch (Exception e) {
             e.printStackTrace();
