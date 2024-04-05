@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String target = DIRECTORY + "/1.hprof";
             long t = System.currentTimeMillis();
             Debug.dumpHprofData(source);
-            System.err.println(">>>>>>>> tailor_for_file: " + (System.currentTimeMillis() - t));
+            System.err.println(">>>>>>>> tailor_for_file: Debug.dumpHprofData:" + (System.currentTimeMillis() - t));
+            t = System.currentTimeMillis();
             Tailor.cropHprofData(source, target, true);
+            System.err.println(">>>>>>>> tailor_for_file: Tailor.cropHprofData:" + (System.currentTimeMillis() - t));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             long t = System.currentTimeMillis();
             Tailor.dumpHprofData(target, false);
-            System.err.println(">>>>>>>> tailor_for_hook: " + (System.currentTimeMillis() - t));
+            System.err.println(">>>>>>>> tailor_for_hook: Tailor.dumpHprofData:" + (System.currentTimeMillis() - t));
         } catch (Exception e) {
             e.printStackTrace();
         }
