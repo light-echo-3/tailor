@@ -6,20 +6,45 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.bytedance.tailor.Tailor;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    static final String DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath();
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.main);
-        findViewById(R.id.btn).setOnClickListener(this);
+        new CrashHandler().init();
 
+        TestTailorUtils.INSTANCE.checkDirectory(this);
+
+        setContentView(R.layout.main);
+        init();
+
+        requestPermissionsI();
+    }
+
+    private void init() {
+        findViewById(R.id.testDump).setOnClickListener(v -> {
+            TestTailorUtils.INSTANCE.tailor_for_file();
+            TestTailorUtils.INSTANCE.tailor_for_hook();
+        });
+        findViewById(R.id.testOOM).setOnClickListener(v -> {
+            List<String> list = new ArrayList<>();
+            int i = 0;
+            while (true) {
+                list.add("test---" + i++);
+            }
+        });
+    }
+
+    private void requestPermissionsI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
                 String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -29,34 +54,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view) {
-        tailor_for_file();
-        tailor_for_hook();
-    }
-
-    void tailor_for_file() {
-        try {
-            String source = DIRECTORY + "/0.hprof";
-            String target = DIRECTORY + "/1.hprof";
-            long t = System.currentTimeMillis();
-            Debug.dumpHprofData(source);
-            System.err.println(">>>>>>>> tailor_for_file: Debug.dumpHprofData:" + (System.currentTimeMillis() - t));
-            t = System.currentTimeMillis();
-            Tailor.cropHprofData(source, target, true);
-            System.err.println(">>>>>>>> tailor_for_file: Tailor.cropHprofData:" + (System.currentTimeMillis() - t));
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101) {
+            TestTailorUtils.INSTANCE.checkDirectory(this);
         }
     }
 
-    void tailor_for_hook() {
-        String target = DIRECTORY + "/2.hprof";
-        try {
-            long t = System.currentTimeMillis();
-            Tailor.dumpHprofData(target, false);
-            System.err.println(">>>>>>>> tailor_for_hook: Tailor.dumpHprofData:" + (System.currentTimeMillis() - t));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
+
+
+
+
+
 }
