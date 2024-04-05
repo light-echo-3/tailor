@@ -1,10 +1,7 @@
 package com.bytedance.demo;
 
-import android.os.Environment;
-
 import com.bytedance.tailor.Tailor;
 
-import java.io.File;
 import java.io.IOException;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
@@ -23,15 +20,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         //回调函数，处理异常出现后的情况
         // 在异常回调里通过 Tailor 获取快照
         if (e instanceof java.lang.OutOfMemoryError) {
-            String path = TestTailorUtils.INSTANCE.getDIRECTORY() + "/mini.hprof";
-            try {
-                long temp = System.currentTimeMillis();
-                System.err.println(">>>>>>>> tailor--uncaughtException-OutOfMemoryError-begin");
-                Tailor.dumpHprofData(path, true);
-                System.err.println(">>>>>>>> tailor--uncaughtException-OutOfMemoryError-end:duration=" + (System.currentTimeMillis() - temp));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            TestTailorUtils.tailor_for_file();
+            TestTailorUtils.tailor_for_hook("mini.hprof");
             System.err.println(">>>>>>>> tailor--uncaughtException-kill-process");
             mDefaultHandler.uncaughtException(t, e);
         } else {
