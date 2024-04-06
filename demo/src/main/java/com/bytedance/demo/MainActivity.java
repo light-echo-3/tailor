@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        MyApplication.topActivity = this;
         new CrashHandler().init();
 
         TestTailorUtils.checkDirectory(this);
@@ -57,9 +58,9 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-
-
-
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyApplication.topActivity = null;
+    }
 }
