@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +33,19 @@ public class MainActivity extends AppCompatActivity{
             TestTailorUtils.tailor_for_hook("2.hprof");
         });
         findViewById(R.id.testOOM).setOnClickListener(v -> {
+            v.setEnabled(false);
+            testOom();
+        });
+    }
+
+    private void testOom() {
+        new Thread(() -> {
             List<TestOomModel> list = new ArrayList<>();
             int i = 0;
             while (true) {
                 list.add(new TestOomModel("test---" + i++));
             }
-        });
+        }).start();
     }
 
     private void requestPermissionsI() {
