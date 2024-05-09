@@ -1,33 +1,19 @@
-package com.bytedance.demo;
+# 使用Tailor检测oom(可用于线上检测)
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.widget.Toast;
+## 发生oom异常时，进行捕获。
 
-public class CrashHandler implements Thread.UncaughtExceptionHandler {
+实现类：com.bytedance.demo.CrashHandler
+    
+```java
+    public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
-    private static final String TAG = "CrashHandler";
-
-    private Thread.UncaughtExceptionHandler mDefaultHandler;
-
-    public void init() {
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        //设置该CrashHandler为系统默认的
-        Thread.setDefaultUncaughtExceptionHandler(this);
-    }
-
+    ...
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         // 捕获oom异常，通过 Tailor 获取快照
         if (e instanceof java.lang.OutOfMemoryError) {
-//            TestTailorUtils.debugDumpHprofData();
-//            TestTailorUtils.tailor_for_hook("mini.hprof");
-//            System.err.println(">>>>>>>> tailor--uncaughtException-kill-process");
-
+            ...
             showAlertDialog(t,e);
         } else {
             mDefaultHandler.uncaughtException(t, e);
@@ -66,3 +52,35 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }.start();
     }
 }
+```
+
+com.bytedance.demo.TestTailorUtils#tailor_for_hook
+
+```java
+public static void tailor_for_hook(String fileName) {
+    String target = DIRECTORY + "/" + fileName;
+    try {
+        long t = System.currentTimeMillis();
+        System.err.println(">>>>>>>> tailor_for_hook: Tailor.dumpHprofData-begin:fileName=" + fileName);
+        Tailor.dumpHprofData(target, true);//这里要开启压缩，https://github.com/bytedance/tailor/issues/14
+        System.err.println(">>>>>>>> tailor_for_hook: Tailor.dumpHprofData-end:fileName=" + fileName + ",duration=" + (System.currentTimeMillis() - t));
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+---
+```java
+```
